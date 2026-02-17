@@ -1,0 +1,5 @@
+Realty AI/venv/
+Realty AI/real_estate_output.csv
+**/.ipynb_checkpoints/
+__pycache__/
+*.pyc
