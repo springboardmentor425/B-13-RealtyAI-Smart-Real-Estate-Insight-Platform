@@ -1,0 +1,71 @@
+# Navigate to REALTYAI folder
+cd /path/to/REALTYAI
+
+# Create .gitignore file and add content
+cat > .gitignore << 'EOL'
+# Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+myenv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyf
+*.pyz
+*.pyw
+.python-version
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+*.nbconvert/
+
+# Data files (uncomment if you don't want to push CSV files)
+# *.csv
+# *.xlsx
+# *.xls
+# *.json
+
+# Output files (optional - if you want to exclude generated files)
+# outputs/
+# outputs/*.csv
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+*.log
+
+# Project specific
+scripts/__pycache__/
+notebooks/.ipynb_checkpoints/
+EOL.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.vscode/
+*.log
