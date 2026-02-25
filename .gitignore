@@ -1,2 +1,4 @@
 venv/
 dataset/City_time_series.csv
+dataset/price_paid_records.csv
+
