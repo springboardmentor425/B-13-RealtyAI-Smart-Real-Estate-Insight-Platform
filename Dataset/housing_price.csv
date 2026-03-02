@@ -1,0 +1,6 @@
+Date,City,Area_sqft,Bedrooms,Bathrooms,Floors,Parking,Year_Built,Property_Age,Location_Rating,Distance_to_Center_km,Nearby_Schools,Nearby_Hospitals,Nearby_Malls,Crime_Rate,Price_per_Sqft,Total_Price,Loan_Eligible,Property_Type,Listing_Status
+2024-01-31,Hyderabad,1200,3,2,1,1,2015,9,4.5,10,3,2,1,2.1,4200,5040000,Yes,Apartment,Available
+2024-02-29,Chennai,1000,2,2,1,1,2012,12,4.2,8,2,2,1,2.5,4500,4500000,Yes,Apartment,Sold
+2024-03-31,Mumbai,1500,4,3,2,2,2018,6,4.8,5,4,3,2,1.8,6000,9000000,Yes,Villa,Available
+2024-04-30,Bangalore,1300,3,2,1,1,2016,8,4.6,7,3,2,1,2.0,5000,6500000,No,Apartment,Available
+2024-05-31,Pune,1100,2,2,1,1,2014,10,4.3,9,2,2,1,2.3,4300,4730000,Yes,Apartment,Sold
