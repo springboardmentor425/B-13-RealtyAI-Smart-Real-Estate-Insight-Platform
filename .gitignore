@@ -1,4 +1,6 @@
 venv/
 dataset/City_time_series.csv
 dataset/price_paid_records.csv
-notebooks/sesssion.ipynb
+notebooks/session.ipynb
+dataset/my_dataset.csv
+dataset/my_dataset_100000.csv
