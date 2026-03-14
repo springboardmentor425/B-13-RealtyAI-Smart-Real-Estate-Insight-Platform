@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bangalore Property Price Prediction | AI Real Estate</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- AOS CSS for scroll animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- 1. CINEMATIC LOADING PAGE -->
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="house-animation">
+                <div class="foundation"></div>
+                <div class="walls"></div>
+                <div class="roof"></div>
+                <div class="windows">
+                    <div class="window"></div>
+                    <div class="window"></div>
+                </div>
+                <i class="fa-solid fa-house glow-icon"></i>
+            </div>
+            <h3 class="loading-text mt-4">Preparing AI Property Intelligence...</h3>
+            <div class="loading-bar-container">
+                <div class="loading-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. NAVBAR -->
+    <nav class="navbar navbar-expand-lg fixed-top glass-navbar">
+        <div class="container custom-container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <i class="fa-solid fa-house-signal me-2 brand-icon"></i>
+                <span class="brand-text">RealtyAI</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="fa-solid fa-bars text-white"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dataset">Dataset</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="predict.html">Predict</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 3. HERO SECTION -->
+    <section class="hero-section d-flex align-items-center">
+        <div class="container custom-container">
+            <div class="row align-items-center">
+                <!-- Left Content -->
+                <div class="col-lg-6 hero-text-col" data-aos="fade-right" data-aos-duration="1200">
+                    <h1 class="hero-headline">Know Your Home's <span class="text-accent">True Value</span></h1>
+                    <h4 class="hero-subheading text-secondary-light mt-3">AI powered property price prediction for
+                        Bangalore real estate.</h4>
+                    <p class="hero-description mt-4 mb-5">
+                        This platform analyzes thousands of real estate listings and predicts property prices based on
+                        square footage, bedrooms, bathrooms, and location.
+                    </p>
+                    <a href="predict.html" class="btn btn-accent btn-glow hero-cta">
+                        Predict Property Price <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+
+                <!-- Right Content -->
+                <div class="col-lg-6 mt-5 mt-lg-0" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
+                    <div class="glass-card video-card">
+                        <div class="video-wrapper">
+                            <!-- Placeholder video or stylized element -->
+                            <video src="/house-animation.mp4" autoplay loop muted playsinline
+                                class="hero-video"></video>
+                            <div class="video-overlay">
+                                <div class="pulse-ring"></div>
+                                <span>AI Analyzing...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. DATASET INSIGHTS SECTION -->
+    <section id="dataset" class="dataset-section py-5">
+        <div class="container custom-container">
+            <h2 class="section-title text-center mb-5" data-aos="fade-up">Insights From Real Estate Dataset</h2>
+
+            <div class="pillars-container mt-5">
+                <!-- Pillar 1 -->
+                <div class="pillar-card glass-card" data-aos="fade-up" data-aos-delay="100">
+                    <h5 class="pillar-title">Dataset Overview</h5>
+                    <div class="pillar-content">
+                        <p><strong>Total Records:</strong> 13,320</p>
+                        <p><strong>Features:</strong> 9 columns</p>
+                        <p><strong>Clean Dataset:</strong> 7,251</p>
+                    </div>
+                </div>
+
+                <!-- Pillar 2 -->
+                <div class="pillar-card glass-card" data-aos="fade-up" data-aos-delay="200">
+                    <h5 class="pillar-title">Property Types</h5>
+                    <div class="pillar-content">
+                        <p><strong>Super Built-up Area:</strong> 8790</p>
+                        <p><strong>Built-up Area:</strong> 2418</p>
+                        <p><strong>Plot Area:</strong> 2025</p>
+                    </div>
+                </div>
+
+                <!-- Pillar 3 -->
+                <div class="pillar-card glass-card" data-aos="fade-up" data-aos-delay="300">
+                    <h5 class="pillar-title">Location Insights</h5>
+                    <div class="pillar-content">
+                        <p><strong>Unique:</strong> 1293</p>
+                        <p><strong>Filtered:</strong> 242</p>
+                        <p><strong>Top:</strong> Whitefield (535)</p>
+                    </div>
+                </div>
+
+                <!-- Pillar 4 -->
+                <div class="pillar-card glass-card" data-aos="fade-up" data-aos-delay="400">
+                    <h5 class="pillar-title">Price Insights</h5>
+                    <div class="pillar-content">
+                        <p><strong>Avg price/sqft:</strong> ₹6308</p>
+                        <p><strong>Median/sqft:</strong> ₹5294</p>
+                        <p><strong>Max/sqft:</strong> ₹176k</p>
+                    </div>
+                </div>
+
+                <!-- Pillar 5 -->
+                <div class="pillar-card glass-card" data-aos="fade-up" data-aos-delay="500">
+                    <h5 class="pillar-title">Property Size</h5>
+                    <div class="pillar-content">
+                        <p><strong>Minimum:</strong> 300 sqft</p>
+                        <p><strong>Common:</strong> 1k-2k sqft</p>
+                        <p><strong>Luxury:</strong> 3000+ sqft</p>
+                    </div>
+                </div>
+
+                <!-- Pillar 6 -->
+                <div class="pillar-card glass-card" data-aos="fade-up" data-aos-delay="600">
+                    <h5 class="pillar-title">ML Performance</h5>
+                    <div class="pillar-content">
+                        <p><strong>Best Model:</strong> Linear Reg</p>
+                        <p><strong>Accuracy:</strong> ~82%</p>
+                        <p><strong>CV Score:</strong> 0.82-0.85</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- 6. PREDICT PROPERTY BUTTON -->
+    <section class="cta-section text-center py-5 mb-5" data-aos="zoom-in">
+        <div class="container">
+            <a href="predict.html" class="btn btn-accent btn-glow btn-lg px-5 py-3 fs-4">
+                Start Property Price Prediction <i class="fa-solid fa-wand-magic-sparkles ms-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 8. CONTACT SECTION -->
+    <footer id="contact" class="footer-section pt-5 pb-3">
+        <div class="container custom-container glass-card Contact-card p-5 mb-4 text-center">
+            <h2 class="section-title mb-4">Contact</h2>
+            <div class="contact-info">
+                <h4>Ayush Raghuwanshi</h4>
+                <p class="text-secondary-light mb-4">Project: Springboard AI Project</p>
+                <div class="d-flex justify-content-center gap-4">
+                    <a href="https://github.com/Ayush-Raghuwanshi-Dev" target="_blank" class="contact-link">
+                        <i class="fa-brands fa-github fs-2"></i>
+                        <span>Ayush-Raghuwanshi-Dev</span>
+                    </a>
+                    <a href="mailto:ayushraghuwanshi.dev@gmail.com" class="contact-link">
+                        <i class="fa-solid fa-envelope fs-2"></i>
+                        <span>ayushraghuwanshi.dev@gmail.com</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center text-secondary mt-5 pb-2">
+            <small>&copy; 2026 RealtyAI. All rights reserved.</small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- AOS for Scroll Animations -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+
+</html>

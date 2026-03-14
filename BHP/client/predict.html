@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Price | RealtyAI</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="predict-page">
+
+    <!-- Blurred Background Image Container -->
+    <div class="predict-bg"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg fixed-top glass-navbar">
+        <div class="container custom-container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <i class="fa-solid fa-house-signal me-2 brand-icon"></i>
+                <span class="brand-text">RealtyAI</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="fa-solid fa-bars text-white"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#dataset">Dataset</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="predict.html">Predict</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 7. PREDICTION SECTION -->
+    <div class="container custom-container predict-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="zoom-in" data-aos-duration="1000">
+                <div class="glass-card form-panel p-5">
+                    <h2 class="text-center mb-4">Property Price Prediction</h2>
+
+                    <form id="prediction-form">
+                        <!-- Area Input -->
+                        <div class="mb-4">
+                            <label class="form-label">Area (Square Feet)</label>
+                            <div class="input-group glass-input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-ruler-combined"></i></span>
+                                <input type="number" class="form-control" id="uiSqft" placeholder="e.g. 1000" required>
+                            </div>
+                        </div>
+
+                        <!-- BHK Selection -->
+                        <div class="mb-4">
+                            <label class="form-label">Select BHK</label>
+                            <div class="btn-group toggle-group w-100" role="group" id="bhk-group">
+                                <input type="radio" class="btn-check" name="bhk" id="bhk1" value="1">
+                                <label class="btn btn-outline-glass" for="bhk1">1</label>
+
+                                <input type="radio" class="btn-check" name="bhk" id="bhk2" value="2" checked>
+                                <label class="btn btn-outline-glass" for="bhk2">2</label>
+
+                                <input type="radio" class="btn-check" name="bhk" id="bhk3" value="3">
+                                <label class="btn btn-outline-glass" for="bhk3">3</label>
+
+                                <input type="radio" class="btn-check" name="bhk" id="bhk4" value="4">
+                                <label class="btn btn-outline-glass" for="bhk4">4</label>
+
+                                <input type="radio" class="btn-check" name="bhk" id="bhk5" value="5">
+                                <label class="btn btn-outline-glass" for="bhk5">5</label>
+                            </div>
+                        </div>
+
+                        <!-- Bathroom Selection -->
+                        <div class="mb-4">
+                            <label class="form-label">Select Bathrooms</label>
+                            <div class="btn-group toggle-group w-100" role="group" id="bath-group">
+                                <input type="radio" class="btn-check" name="bath" id="bath1" value="1">
+                                <label class="btn btn-outline-glass" for="bath1">1</label>
+
+                                <input type="radio" class="btn-check" name="bath" id="bath2" value="2" checked>
+                                <label class="btn btn-outline-glass" for="bath2">2</label>
+
+                                <input type="radio" class="btn-check" name="bath" id="bath3" value="3">
+                                <label class="btn btn-outline-glass" for="bath3">3</label>
+
+                                <input type="radio" class="btn-check" name="bath" id="bath4" value="4">
+                                <label class="btn btn-outline-glass" for="bath4">4</label>
+
+                                <input type="radio" class="btn-check" name="bath" id="bath5" value="5">
+                                <label class="btn btn-outline-glass" for="bath5">5</label>
+                            </div>
+                        </div>
+
+                        <!-- Location Dropdown -->
+                        <div class="mb-5">
+                            <label class="form-label">Location</label>
+                            <div class="input-group glass-input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
+                                <select class="form-select" id="uiLocations" required>
+                                    <option value="" disabled selected>Choose a Location</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- CTA Button -->
+                        <button type="button" onclick="onClickedEstimatePrice()"
+                            class="btn btn-accent btn-glow w-100 py-3 fs-5">
+                            Estimate Price <i class="fa-solid fa-bolt ms-2"></i>
+                        </button>
+                    </form>
+
+                    <!-- Loading Spinner -->
+                    <div id="loading-spinner" class="text-center mt-4 d-none">
+                        <div class="spinner-border text-accent" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-secondary-light">AI Model Calculating...</p>
+                    </div>
+
+                    <!-- Result Card -->
+                    <div id="uiEstimatedPrice" class="result-card glass-card mt-4 p-4 text-center"
+                        style="display: none;">
+                        <h4 class="text-secondary-light mb-2">Estimated Price</h4>
+                        <h1 class="text-white fw-bold"><span class="text-accent">₹</span> <span
+                                id="priceValue">--</span> <span class="fs-4">Lakhs</span></h1>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- GSAP & AOS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+
+</html>
