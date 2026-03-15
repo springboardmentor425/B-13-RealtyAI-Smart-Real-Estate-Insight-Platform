@@ -1,5 +1,2 @@
-<<<<<<< HEAD
-env
-=======
 env/
->>>>>>> ce7b3e9 (Add gitignore to ignore env folder in notebooks)
+*.pkl
