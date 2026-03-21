@@ -1,20 +1,12 @@
-
-# Python virtual environment
-.venv/
-
-# Python cache
+node_modules/
+.env
 __pycache__/
 *.pyc
-
-# Jupyter notebook checkpoints
-.ipynb_checkpoints/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Model artifacts (optional if large)
-*.pickle
-
-# Logs
+venv/
+.venv/
 *.log
+.DS_Store
+dist/
+build/
+.vscode/
+.idea/

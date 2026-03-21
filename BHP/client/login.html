@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | RealtyAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="predict-page">
+    <div class="predict-bg"></div>
+
+    <nav class="navbar navbar-expand-lg fixed-top glass-navbar">
+        <div class="container custom-container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <i class="fa-solid fa-house-signal me-2 brand-icon"></i>
+                <span class="brand-text">RealtyAI</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-card glass-card" data-aos="fade-up">
+            <h2 class="auth-title text-center">Welcome <span class="text-accent">Back</span></h2>
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="email" class="form-control form-control-glass input-focus-glow" placeholder="name@example.com" required>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Password</label>
+                    <div class="password-field-container">
+                        <input type="password" id="password" class="form-control form-control-glass input-focus-glow" placeholder="••••••••" required>
+                        <i class="fa-solid fa-eye-slash password-toggle" id="togglePassword" onclick="togglePassword('password', 'togglePassword')"></i>
+                    </div>
+                </div>
+                <div class="text-end mb-4">
+                    <a href="forgot-password.html" class="text-accent text-decoration-none small">Forgot Password?</a>
+                </div>
+                <button type="submit" id="loginBtn" class="btn btn-accent w-100 py-3 mt-2 btn-glow">
+                    Login <i class="fa-solid fa-right-to-bracket ms-2"></i>
+                </button>
+            </form>
+            <p class="text-center mt-4 text-secondary-light">
+                Don't have an account? <a href="signup.html" class="text-accent text-decoration-none">Sign Up</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

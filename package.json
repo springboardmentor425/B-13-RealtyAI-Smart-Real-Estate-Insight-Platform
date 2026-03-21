@@ -1,0 +1,11 @@
+{
+  "name": "realty-ai",
+  "version": "1.0.0",
+  "description": "Smart Real Estate Insight Platform",
+  "scripts": {
+    "dev": "node_modules\\.bin\\concurrently.cmd \"npm run dev --prefix BHP/Auth\" \"cd BHP/server && python server.py\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
