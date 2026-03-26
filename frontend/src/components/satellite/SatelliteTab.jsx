@@ -1,19 +1,24 @@
+import { lazy, Suspense, useEffect } from 'react'
 import { useSatellite } from '../../hooks/useSatellite'
+import { usePredictionHistory } from '../../hooks/usePredictionHistory'
 import ImageUploader from './ImageUploader'
 import ImagePreview from './ImagePreview'
 import DetectionCanvas from './DetectionCanvas'
 import CoordInput from './CoordInput'
-import MapSelector from './MapSelector'
 import SatelliteResult from './SatelliteResult'
+import PredictionHistory from '../common/PredictionHistory'
 import Button from '../common/Button'
 import ErrorBanner from '../common/ErrorBanner'
 import Card from '../common/Card'
 import Spinner from '../common/Spinner'
 
+// Leaflet is heavy — only load when Map tab is first opened
+const MapSelector = lazy(() => import('./MapSelector'))
+
 const MODES = [
   { id: 'upload', label: '📤 Upload' },
   { id: 'coords', label: '📍 Coords' },
-  { id: 'map',    label: '🗺️ Map' },
+  { id: 'map',    label: '🗺️ Map'    },
 ]
 
 function ModeToggle({ mode, onChange }) {
@@ -38,22 +43,31 @@ function ModeToggle({ mode, onChange }) {
 
 export default function SatelliteTab() {
   const {
-    mode, coords, file, previewUrl, prediction, modelInfo, isLoading, error,
+    mode, coords, file, compressed, previewUrl, prediction, modelInfo, isLoading, error,
     mapMarkers,
     handleModeChange, handleCoordsChange, handlePredictByCoords,
     handleFileSelect, handleRemove, handlePredict,
     handleMapMarkerAdd, handleMapClear, handlePredictByMap,
   } = useSatellite()
 
+  const { history, addEntry, clearHistory } = usePredictionHistory()
+
+  // Save every new satellite prediction to history
+  useEffect(() => {
+    if (!prediction) return
+    const label = prediction.tile_info
+      ? `${prediction.tile_info.lat.toFixed(4)}, ${prediction.tile_info.lon.toFixed(4)}`
+      : file?.name ?? 'Uploaded image'
+    addEntry({ type: 'satellite', label, price: prediction.predicted_price })
+  }, [prediction]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const hasResult  = !!prediction
-  const loadingMsg = mode === 'coords' || mode === 'map'
-    ? 'Fetching tile & running detection…'
-    : 'Running YOLOv8 detection…'
+  const loadingMsg = mode === 'upload' ? 'Running YOLOv8 detection…' : 'Fetching tile & running detection…'
   const emptyMsg   = mode === 'upload'
     ? 'Upload an aerial image to see feature detection results'
     : mode === 'coords'
     ? 'Enter coordinates to fetch and analyse a satellite tile'
-    : 'Click on the map to mark a plot, then predict its price'
+    : 'Click on the map to mark a plot (up to 4 points), then predict its price'
 
   const handleReset = () => {
     if (mode === 'upload') handleRemove()
@@ -92,13 +106,18 @@ export default function SatelliteTab() {
               )}
             </div>
 
-            {/* ── Upload mode ── */}
+            {/* Upload mode */}
             {mode === 'upload' && !hasResult && (
               !file ? (
                 <ImageUploader onFileSelect={handleFileSelect} isLoading={isLoading} />
               ) : (
                 <div className="space-y-4">
                   <ImagePreview file={file} previewUrl={previewUrl} onRemove={handleRemove} />
+                  {compressed && (
+                    <p className="text-xs text-center text-slate-400">
+                      Image compressed to reduce upload size
+                    </p>
+                  )}
                   <Button variant="primary" onClick={handlePredict} isLoading={isLoading} className="w-full">
                     {isLoading ? 'Analyzing…' : '🔍 Detect & Predict Price'}
                   </Button>
@@ -106,7 +125,7 @@ export default function SatelliteTab() {
               )
             )}
 
-            {/* ── Coords mode ── */}
+            {/* Coords mode */}
             {mode === 'coords' && !hasResult && (
               <CoordInput
                 coords={coords}
@@ -116,18 +135,25 @@ export default function SatelliteTab() {
               />
             )}
 
-            {/* ── Map mode ── */}
+            {/* Map mode — lazy loaded */}
             {mode === 'map' && !hasResult && (
-              <MapSelector
-                markers={mapMarkers}
-                onAdd={handleMapMarkerAdd}
-                onClear={handleMapClear}
-                onPredict={handlePredictByMap}
-                isLoading={isLoading}
-              />
+              <Suspense fallback={
+                <div className="flex flex-col items-center gap-3 py-12">
+                  <Spinner size="lg" />
+                  <p className="text-sm text-slate-500">Loading map…</p>
+                </div>
+              }>
+                <MapSelector
+                  markers={mapMarkers}
+                  onAdd={handleMapMarkerAdd}
+                  onClear={handleMapClear}
+                  onPredict={handlePredictByMap}
+                  isLoading={isLoading}
+                />
+              </Suspense>
             )}
 
-            {/* ── After prediction — detection canvas ── */}
+            {/* After prediction — detection canvas */}
             {hasResult && previewUrl && (
               <DetectionCanvas imageUrl={previewUrl} detections={prediction.detections} />
             )}
@@ -149,7 +175,7 @@ export default function SatelliteTab() {
             </Card>
           )}
 
-          {/* Pipeline info (only when idle) */}
+          {/* Pipeline info */}
           {modelInfo && !hasResult && !isLoading && (
             <Card title="Detection Pipeline">
               <ol className="space-y-1.5">
@@ -162,6 +188,9 @@ export default function SatelliteTab() {
               </ol>
             </Card>
           )}
+
+          {/* Prediction history */}
+          <PredictionHistory history={history} onClear={clearHistory} />
         </div>
 
         {/* ── Right panel ── */}

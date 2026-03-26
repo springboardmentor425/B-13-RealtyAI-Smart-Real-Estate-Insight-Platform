@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react'
 import { satelliteService } from '../services/satelliteService'
+import { compressImage } from '../utils/compressImage'
 
 const INITIAL_COORDS = { lat: '', lon: '', zoom: 18 }
 
-/** Given an array of {lat, lon} markers, return the centre + a suitable zoom. */
 function calcCenterAndZoom(markers) {
   if (markers.length === 1) return { lat: markers[0].lat, lon: markers[0].lon, zoom: 18 }
-
   const lats = markers.map(m => m.lat)
   const lons = markers.map(m => m.lon)
-  const centerLat = (Math.min(...lats) + Math.max(...lats)) / 2
-  const centerLon = (Math.min(...lons) + Math.max(...lons)) / 2
-  const span      = Math.max(Math.max(...lats) - Math.min(...lats), Math.max(...lons) - Math.min(...lons))
-
+  const lat  = (Math.min(...lats) + Math.max(...lats)) / 2
+  const lon  = (Math.min(...lons) + Math.max(...lons)) / 2
+  const span = Math.max(Math.max(...lats) - Math.min(...lats), Math.max(...lons) - Math.min(...lons))
   let zoom = 18
   if      (span > 0.05)  zoom = 14
   else if (span > 0.02)  zoom = 15
@@ -20,16 +18,16 @@ function calcCenterAndZoom(markers) {
   else if (span > 0.003) zoom = 17
   else if (span > 0.001) zoom = 18
   else                   zoom = 19
-
-  return { lat: centerLat, lon: centerLon, zoom }
+  return { lat, lon, zoom }
 }
 
 export function useSatellite() {
-  const [mode,        setMode]        = useState('upload')   // 'upload' | 'coords' | 'map'
+  const [mode,        setMode]        = useState('upload')
   const [file,        setFile]        = useState(null)
+  const [compressed,  setCompressed]  = useState(false)
   const [previewUrl,  setPreviewUrl]  = useState(null)
   const [coords,      setCoords]      = useState(INITIAL_COORDS)
-  const [mapMarkers,  setMapMarkers]  = useState([])          // [{lat, lon}, ...]
+  const [mapMarkers,  setMapMarkers]  = useState([])
   const [prediction,  setPrediction]  = useState(null)
   const [modelInfo,   setModelInfo]   = useState(null)
   const [isLoading,   setIsLoading]   = useState(false)
@@ -51,14 +49,17 @@ export function useSatellite() {
     setError(null)
     setCoords(INITIAL_COORDS)
     setMapMarkers([])
+    setCompressed(false)
   }
 
   // ── Upload mode ───────────────────────────────────────────────
-  const handleFileSelect = (selectedFile) => {
-    setFile(selectedFile)
-    setPreviewUrl(URL.createObjectURL(selectedFile))
-    setPrediction(null)
+  const handleFileSelect = async (selectedFile) => {
     setError(null)
+    setPrediction(null)
+    const ready = await compressImage(selectedFile)
+    setCompressed(ready !== selectedFile)
+    setFile(ready)
+    setPreviewUrl(URL.createObjectURL(ready))
   }
 
   const handleRemove = () => {
@@ -66,6 +67,7 @@ export function useSatellite() {
     setPreviewUrl(null)
     setPrediction(null)
     setError(null)
+    setCompressed(false)
   }
 
   const handlePredict = async () => {
@@ -111,10 +113,7 @@ export function useSatellite() {
 
   // ── Map mode ──────────────────────────────────────────────────
   const handleMapMarkerAdd = (latlng) => {
-    setMapMarkers(prev => {
-      if (prev.length >= 4) return prev
-      return [...prev, latlng]
-    })
+    setMapMarkers(prev => prev.length >= 4 ? prev : [...prev, latlng])
   }
 
   const handleMapClear = () => {
@@ -143,7 +142,7 @@ export function useSatellite() {
   }
 
   return {
-    mode, coords, file, previewUrl, prediction, modelInfo, isLoading, error,
+    mode, coords, file, compressed, previewUrl, prediction, modelInfo, isLoading, error,
     mapMarkers,
     handleModeChange, handleCoordsChange, handlePredictByCoords,
     handleFileSelect, handleRemove, handlePredict,
