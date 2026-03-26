@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from routers.prediction import router as prediction_router
 from routers.satellite import router as satellite_router
 from ml.model import ModelManager
@@ -22,6 +23,14 @@ app = FastAPI(
     ),
     version="2.0.0",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
 )
 
 app.include_router(prediction_router, prefix="/api/v1")
