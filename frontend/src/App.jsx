@@ -17,10 +17,13 @@ export default function App() {
       <Header structuredHealth={structuredHealth} satelliteHealth={satelliteHealth} />
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-8">
-        {activeTab === TABS.STRUCTURED && <StructuredTab />}
-        {activeTab === TABS.SATELLITE  && <SatelliteTab />}
-        {activeTab === TABS.LOCATION   && <LocationTab />}
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-8">
+        {/* key triggers fade-in animation on every tab switch */}
+        <div key={activeTab} className="animate-fade-in">
+          {activeTab === TABS.STRUCTURED && <StructuredTab />}
+          {activeTab === TABS.SATELLITE  && <SatelliteTab />}
+          {activeTab === TABS.LOCATION   && <LocationTab />}
+        </div>
       </main>
 
       <Footer />
