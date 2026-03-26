@@ -56,6 +56,7 @@ async def predict_from_satellite(
         predicted_price=result["predicted_price"],
         formula_price=result["formula_price"],
         detected_features=result["detected_features"],
+        detections=result["detections"],
     )
 
 

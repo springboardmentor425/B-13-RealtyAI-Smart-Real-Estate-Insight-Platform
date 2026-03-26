@@ -1,14 +1,10 @@
 from pydantic import BaseModel
 
 
-class DetectedFeatures(BaseModel):
-    swimming_pools: float
-    waterbodies: float
-    gardens: float
-    boats: float
-    parking_space: float
-    solar_panels: float
-    tennis_court: float
+class Detection(BaseModel):
+    feature: str
+    confidence: float
+    bbox: list[float]   # normalized [x1, y1, x2, y2] in 0-1 range
 
 
 class SatellitePredictionResponse(BaseModel):
@@ -16,6 +12,7 @@ class SatellitePredictionResponse(BaseModel):
     formula_price: float
     currency: str = "USD"
     detected_features: dict[str, float]
+    detections: list[Detection] = []
     note: str = (
         "YOLO detects boats & parking (COCO weights). "
         "Pools, water, gardens, tennis, solar use color heuristics. "
