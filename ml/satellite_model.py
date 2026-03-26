@@ -147,15 +147,17 @@ class SatelliteModelManager:
         print(f"[SatelliteModel] GBR saved. R2={self.metrics['r2']}")
 
     # ------------------------------------------------------------------
-    # Feature extraction from image bytes
+    # Feature extraction from image bytes — returns features + detections
     # ------------------------------------------------------------------
-    def _extract_features(self, image_bytes: bytes) -> dict[str, float]:
+    def _extract_features(self, image_bytes: bytes) -> tuple[dict[str, float], list[dict]]:
         nparr = np.frombuffer(image_bytes, np.uint8)
         img   = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         if img is None:
             raise ValueError("Could not decode image. Ensure it is a valid JPEG/PNG.")
 
-        features = {f: 0.0 for f in FEATURES}
+        img_h, img_w = img.shape[:2]
+        features   = {f: 0.0 for f in FEATURES}
+        detections = []  # [{feature, confidence, bbox: [x1,y1,x2,y2] normalized}]
 
         # ── YOLOv8: boats & parking ──────────────────────────────────
         results = self.yolo(img, verbose=False)[0]
@@ -167,63 +169,94 @@ class SatelliteModelManager:
             feat   = COCO_TO_FEATURE.get(cls_id)
             if feat:
                 feature_conf[feat].append(conf)
+                x1, y1, x2, y2 = box.xyxyn[0].tolist()   # already normalized 0-1
+                detections.append({
+                    "feature":    feat,
+                    "confidence": round(conf, 4),
+                    "bbox":       [round(x1, 4), round(y1, 4), round(x2, 4), round(y2, 4)],
+                })
 
         for feat, confs in feature_conf.items():
             if confs:
                 features[feat] = float(np.max(confs))
 
-        # ── OpenCV color heuristics (satellite-specific) ─────────────
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        h, w = img.shape[:2]
-        total_px = h * w
+        # ── OpenCV color heuristics — extract mask + largest contour bbox ──
+        hsv      = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        total_px = img_h * img_w
+
+        def _mask_detection(mask, feature: str, score: float) -> None:
+            """Find the largest contour in a binary mask and add a normalized bbox."""
+            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            if not contours:
+                return
+            cx, cy, cw, ch = cv2.boundingRect(max(contours, key=cv2.contourArea))
+            detections.append({
+                "feature":    feature,
+                "confidence": round(score, 4),
+                "bbox": [
+                    round(cx / img_w, 4),
+                    round(cy / img_h, 4),
+                    round((cx + cw) / img_w, 4),
+                    round((cy + ch) / img_h, 4),
+                ],
+            })
 
         # Swimming Pools — small bright-blue rectangles
-        pool_mask = cv2.inRange(hsv, (95, 80, 120), (130, 255, 255))
+        pool_mask  = cv2.inRange(hsv, (95, 80, 120), (130, 255, 255))
         pool_ratio = cv2.countNonZero(pool_mask) / total_px
         if 0.001 < pool_ratio < 0.15:
-            features["Swimming Pools"] = min(pool_ratio * 20, 1.0)
+            score = min(pool_ratio * 20, 1.0)
+            features["Swimming Pools"] = score
+            _mask_detection(pool_mask, "Swimming Pools", score)
 
         # Waterbodies — large blue/teal areas
-        water_mask = cv2.inRange(hsv, (85, 40, 60), (140, 255, 255))
+        water_mask  = cv2.inRange(hsv, (85, 40, 60), (140, 255, 255))
         water_ratio = cv2.countNonZero(water_mask) / total_px
         if water_ratio > 0.15:
             features["Waterbodies"] = 1.0
+            _mask_detection(water_mask, "Waterbodies", 1.0)
 
         # Gardens — green areas
-        green_mask = cv2.inRange(hsv, (35, 40, 40), (85, 255, 255))
+        green_mask  = cv2.inRange(hsv, (35, 40, 40), (85, 255, 255))
         green_ratio = cv2.countNonZero(green_mask) / total_px
         if green_ratio > 0.05:
-            features["Gardens"] = min(green_ratio * 5, 1.0)
+            score = min(green_ratio * 5, 1.0)
+            features["Gardens"] = score
+            _mask_detection(green_mask, "Gardens", score)
 
-        # Tennis Courts — bright green/blue rectangles
-        court_mask = cv2.inRange(hsv, (85, 60, 100), (100, 255, 255))
+        # Tennis Courts — bright blue-green rectangles
+        court_mask  = cv2.inRange(hsv, (85, 60, 100), (100, 255, 255))
         court_ratio = cv2.countNonZero(court_mask) / total_px
         if 0.005 < court_ratio < 0.08:
-            features["Tennis Court"] = min(court_ratio * 30, 1.0)
+            score = min(court_ratio * 30, 1.0)
+            features["Tennis Court"] = score
+            _mask_detection(court_mask, "Tennis Court", score)
 
-        # Solar Panels — dark blue-grey rectangular arrays
-        solar_mask = cv2.inRange(hsv, (100, 20, 20), (140, 120, 100))
+        # Solar Panels — dark blue-grey arrays
+        solar_mask  = cv2.inRange(hsv, (100, 20, 20), (140, 120, 100))
         solar_ratio = cv2.countNonZero(solar_mask) / total_px
         if 0.005 < solar_ratio < 0.20:
-            features["Solar Panels"] = min(solar_ratio * 15, 1.0)
+            score = min(solar_ratio * 15, 1.0)
+            features["Solar Panels"] = score
+            _mask_detection(solar_mask, "Solar Panels", score)
 
-        return features
+        return features, detections
 
     # ------------------------------------------------------------------
     # Public: predict from raw image bytes
     # ------------------------------------------------------------------
     def predict(self, image_bytes: bytes) -> dict:
-        features    = self._extract_features(image_bytes)
+        features, detections = self._extract_features(image_bytes)
         feature_vec = np.array([[features[f] for f in FEATURES]])
         predicted   = float(self.gbr.predict(feature_vec)[0])
 
-        # Also compute formula-based price for transparency
         formula_price = BASE_PRICE + sum(
             features[f] * PRICE_WEIGHTS[f] for f in FEATURES
         )
 
         return {
-            "predicted_price":  round(predicted, 2),
-            "formula_price":    round(formula_price, 2),
+            "predicted_price":   round(predicted, 2),
+            "formula_price":     round(formula_price, 2),
             "detected_features": {k: round(v, 4) for k, v in features.items()},
+            "detections":        detections,
         }
