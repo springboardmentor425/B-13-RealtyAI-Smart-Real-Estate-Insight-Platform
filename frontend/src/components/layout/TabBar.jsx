@@ -3,6 +3,7 @@ import { TABS } from '../../utils/constants'
 const TAB_CONFIG = [
   { id: TABS.STRUCTURED, label: '📋 Structured Data',   desc: 'Ames Housing features → XGBoost' },
   { id: TABS.SATELLITE,  label: '🛰️ Satellite Image',    desc: 'Aerial photo → YOLOv8 + Gradient Boosting' },
+  { id: TABS.LOCATION,   label: '🗺️ Location Explorer',  desc: 'Search areas, amenities & predict prices' },
 ]
 
 export default function TabBar({ activeTab, onTabChange }) {

@@ -3,19 +3,23 @@ import ImageUploader from './ImageUploader'
 import ImagePreview from './ImagePreview'
 import DetectionCanvas from './DetectionCanvas'
 import CoordInput from './CoordInput'
+import MapSelector from './MapSelector'
 import SatelliteResult from './SatelliteResult'
 import Button from '../common/Button'
 import ErrorBanner from '../common/ErrorBanner'
 import Card from '../common/Card'
 import Spinner from '../common/Spinner'
 
+const MODES = [
+  { id: 'upload', label: '📤 Upload' },
+  { id: 'coords', label: '📍 Coords' },
+  { id: 'map',    label: '🗺️ Map' },
+]
+
 function ModeToggle({ mode, onChange }) {
   return (
     <div className="inline-flex rounded-xl border border-slate-200 bg-slate-100 p-1 gap-1">
-      {[
-        { id: 'upload', label: '📤 Upload Image' },
-        { id: 'coords', label: '📍 Coordinates' },
-      ].map((tab) => (
+      {MODES.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onChange(tab.id)}
@@ -35,15 +39,27 @@ function ModeToggle({ mode, onChange }) {
 export default function SatelliteTab() {
   const {
     mode, coords, file, previewUrl, prediction, modelInfo, isLoading, error,
+    mapMarkers,
     handleModeChange, handleCoordsChange, handlePredictByCoords,
     handleFileSelect, handleRemove, handlePredict,
+    handleMapMarkerAdd, handleMapClear, handlePredictByMap,
   } = useSatellite()
 
-  const hasResult   = !!prediction
-  const loadingMsg  = mode === 'coords' ? 'Fetching tile & running detection…' : 'Running YOLOv8 detection…'
-  const emptyMsg    = mode === 'coords' ? 'Enter coordinates to fetch and analyse a satellite tile' : 'Upload an aerial image to see feature detection results'
+  const hasResult  = !!prediction
+  const loadingMsg = mode === 'coords' || mode === 'map'
+    ? 'Fetching tile & running detection…'
+    : 'Running YOLOv8 detection…'
+  const emptyMsg   = mode === 'upload'
+    ? 'Upload an aerial image to see feature detection results'
+    : mode === 'coords'
+    ? 'Enter coordinates to fetch and analyse a satellite tile'
+    : 'Click on the map to mark a plot, then predict its price'
 
-  const handleReset = () => mode === 'upload' ? handleRemove() : handleModeChange('coords')
+  const handleReset = () => {
+    if (mode === 'upload') handleRemove()
+    else if (mode === 'map') handleMapClear()
+    else handleModeChange('coords')
+  }
 
   return (
     <div className="space-y-6">
@@ -96,6 +112,17 @@ export default function SatelliteTab() {
                 coords={coords}
                 onChange={handleCoordsChange}
                 onPredict={handlePredictByCoords}
+                isLoading={isLoading}
+              />
+            )}
+
+            {/* ── Map mode ── */}
+            {mode === 'map' && !hasResult && (
+              <MapSelector
+                markers={mapMarkers}
+                onAdd={handleMapMarkerAdd}
+                onClear={handleMapClear}
+                onPredict={handlePredictByMap}
                 isLoading={isLoading}
               />
             )}

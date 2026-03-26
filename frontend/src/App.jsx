@@ -5,6 +5,7 @@ import TabBar from './components/layout/TabBar'
 import Footer from './components/layout/Footer'
 import StructuredTab from './components/structured/StructuredTab'
 import SatelliteTab from './components/satellite/SatelliteTab'
+import LocationTab from './components/location/LocationTab'
 import { TABS } from './utils/constants'
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
       <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-8">
         {activeTab === TABS.STRUCTURED && <StructuredTab />}
         {activeTab === TABS.SATELLITE  && <SatelliteTab />}
+        {activeTab === TABS.LOCATION   && <LocationTab />}
       </main>
 
       <Footer />
