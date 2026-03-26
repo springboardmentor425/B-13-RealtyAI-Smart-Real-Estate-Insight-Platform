@@ -16,7 +16,9 @@ Price formula (from original notebook):
   + Solar Panels    × $500,000
 """
 
-import io
+import base64
+import math
+import urllib.request
 import joblib
 import numpy as np
 import cv2
@@ -260,3 +262,45 @@ class SatelliteModelManager:
             "detected_features": {k: round(v, 4) for k, v in features.items()},
             "detections":        detections,
         }
+
+    # ------------------------------------------------------------------
+    # Fetch ESRI satellite tile from lat/lon/zoom (user-provided code)
+    # ------------------------------------------------------------------
+    @staticmethod
+    def fetch_tile_bytes(lat: float, lon: float, zoom: int) -> tuple[bytes, int, int]:
+        lat_rad = math.radians(lat)
+        n = 2.0 ** zoom
+        x = int((lon + 180.0) / 360.0 * n)
+        y = int((1.0 - math.log(math.tan(lat_rad) + (1 / math.cos(lat_rad))) / math.pi) / 2.0 * n)
+
+        url = (
+            f"https://services.arcgisonline.com/ArcGIS/rest/services/"
+            f"World_Imagery/MapServer/tile/{zoom}/{y}/{x}"
+        )
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0",
+            "Referer":    "https://www.arcgis.com/",
+        })
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            image_bytes = resp.read()
+
+        if len(image_bytes) < 1000:
+            raise ValueError(
+                f"Tile returned no imagery for lat={lat}, lon={lon}, zoom={zoom}. "
+                "Try a different location or lower zoom level."
+            )
+
+        return image_bytes, x, y
+
+    # ------------------------------------------------------------------
+    # Public: predict from lat/lon coordinates
+    # ------------------------------------------------------------------
+    def predict_from_coords(self, lat: float, lon: float, zoom: int) -> dict:
+        image_bytes, tile_x, tile_y = self.fetch_tile_bytes(lat, lon, zoom)
+        result = self.predict(image_bytes)
+        result["image_b64"] = base64.b64encode(image_bytes).decode()
+        result["tile_info"] = {
+            "lat": lat, "lon": lon, "zoom": zoom,
+            "tile_x": tile_x, "tile_y": tile_y,
+        }
+        return result

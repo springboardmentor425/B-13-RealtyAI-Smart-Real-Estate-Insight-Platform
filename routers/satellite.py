@@ -1,5 +1,8 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, status
-from schemas.satellite import SatellitePredictionResponse, SatelliteModelInfoResponse
+from schemas.satellite import (
+    SatellitePredictionResponse, SatelliteModelInfoResponse,
+    CoordPredictionRequest, CoordPredictionResponse,
+)
 from ml.satellite_model import SatelliteModelManager, FEATURES, PRICE_WEIGHTS, BASE_PRICE
 
 router = APIRouter(prefix="/satellite", tags=["satellite"])
@@ -57,6 +60,38 @@ async def predict_from_satellite(
         formula_price=result["formula_price"],
         detected_features=result["detected_features"],
         detections=result["detections"],
+    )
+
+
+@router.post(
+    "/predict-by-coords",
+    response_model=CoordPredictionResponse,
+    summary="Fetch satellite tile by coordinates and predict house price",
+)
+async def predict_by_coords(body: CoordPredictionRequest):
+    """
+    Provide latitude, longitude, and zoom level.
+    The API fetches the ESRI satellite tile, runs the detection pipeline,
+    and returns the predicted price + bounding boxes + the tile image as base64.
+    """
+    mgr = _get_ready_manager()
+    try:
+        result = mgr.predict_from_coords(body.lat, body.lon, body.zoom)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e))
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Failed to fetch satellite tile: {e}",
+        )
+
+    return CoordPredictionResponse(
+        predicted_price=result["predicted_price"],
+        formula_price=result["formula_price"],
+        detected_features=result["detected_features"],
+        detections=result["detections"],
+        image_b64=result["image_b64"],
+        tile_info=result["tile_info"],
     )
 
 

@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.prediction import router as prediction_router
 from routers.satellite import router as satellite_router
+from routers.location import router as location_router
 from ml.model import ModelManager
 from ml.satellite_model import SatelliteModelManager
 
@@ -35,6 +36,7 @@ app.add_middleware(
 
 app.include_router(prediction_router, prefix="/api/v1")
 app.include_router(satellite_router,  prefix="/api/v1")
+app.include_router(location_router,   prefix="/api/v1")
 
 
 @app.get("/", tags=["root"])

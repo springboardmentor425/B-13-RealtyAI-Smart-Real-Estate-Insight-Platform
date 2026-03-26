@@ -1,4 +1,4 @@
-export const TABS = { STRUCTURED: 'structured', SATELLITE: 'satellite' }
+export const TABS = { STRUCTURED: 'structured', SATELLITE: 'satellite', LOCATION: 'location' }
 
 export const SATELLITE_FEATURE_COLORS = {
   'Swimming Pools': 'bg-cyan-500',
