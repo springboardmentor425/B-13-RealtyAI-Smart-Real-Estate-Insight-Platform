@@ -1,9 +1,6 @@
 # RealtyAI - Smart Real Estate Insight Platform
 
 Welcome to the **RealtyAI Smart Real Estate Insight Platform**. This project provides intelligent, machine-learning-driven predictions for real estate value using both structured property features and aerial/satellite imagery. 
-
-> This README is specifically tailored to the `Project` folder, which contains the main end-to-end web application (frontend and backend).
-
 ---
 
 ## 🚀 Features
