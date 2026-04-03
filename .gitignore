@@ -5,3 +5,8 @@ notebooks/session.ipynb
 dataset/my_dataset.csv
 dataset/my_dataset_100000.csv
 dataset/cleaned_data.csv
+notebooks/sat_demo.ipynb
+dataset/cleaned_house_data.csv
+notebooks/img_.ipynb
+notebooks/satellite_image.png
+models/
